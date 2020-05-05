@@ -11,20 +11,19 @@ import (
 )
 
 type ToDoRepoIml struct {
-	Db *mongo.Database
+	Collection *mongo.Collection
 }
 
-func NewToDoRepo(db *mongo.Database) repo.ToDoRepo {
+func NewToDoRepo(col *mongo.Collection) repo.ToDoRepo {
 	return &ToDoRepoIml{
-		Db: db,
+		Collection: col,
 	}
 }
 
 func (mongo *ToDoRepoIml) FindToDoByTask(task string) (models.ToDo, error) {
 
 	todo := models.ToDo{}
-
-	result := mongo.Db.Collection("todo").FindOne(context.Background(), bson.M{"task": task})
+	result := mongo.Collection.FindOne(context.Background(), bson.M{"task": task})
 
 	err := result.Decode(&todo)
 	if err != nil {
@@ -42,7 +41,7 @@ func (mongo *ToDoRepoIml) Insert(model models.ToDo) error {
 		return err
 	}
 
-	_, err = mongo.Db.Collection("").InsertOne(context.Background(), bbytes)
+	_, err = mongo.Collection.InsertOne(context.Background(), bbytes)
 
 	if err != nil {
 		return err

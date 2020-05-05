@@ -3,11 +3,10 @@ package driver
 import (
 	"context"
 	"fmt"
-	"time"
+	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type MongoDB struct {
@@ -16,27 +15,25 @@ type MongoDB struct {
 
 var Mongo = &MongoDB{}
 
-func ConnectMongoDB(username, password string) *MongoDB {
-	connStr := fmt.Sprintf("mongodb://localhost:27017")
+func ConnectMongoDB() *MongoDB {
+	// Set client options
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(connStr))
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-	err = client.Connect(ctx)
+	// Check the connection
+	err = client.Ping(context.TODO(), nil)
+
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	err = client.Ping(ctx, readpref.Primary())
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("conntect to DB successfully")
+	fmt.Println("Connected to MongoDB!")
 	Mongo.Client = client
 	return Mongo
 }
