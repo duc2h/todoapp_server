@@ -10,7 +10,18 @@ import (
 	"github.com/labstack/echo"
 )
 
-func ToDoGet(c echo.Context) error {
+func ToDoGetAll(c echo.Context) error {
+	// c.Request().Header.Set("Context-Type", "application/x-www-form-urlencoded")
+	// c.Request().Header.Set("Access-Control-Allow-Origin", "")
+	todos, err := repoIml.NewToDoRepo(models.ToDoDB.Collection).FindAll()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "")
+	}
+
+	return c.JSON(http.StatusOK, todos)
+}
+
+func ToDoGetByTask(c echo.Context) error {
 	task := c.QueryParam("task")
 	if task == "" {
 		return c.String(http.StatusInternalServerError, "")
@@ -44,4 +55,36 @@ func ToDoPost(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, todo)
+}
+
+func ToDoPut(c echo.Context) error {
+	var idStr = c.QueryParam("id")
+	var statusStr = c.QueryParam("status")
+	if idStr == "" || statusStr == "" {
+		return c.String(http.StatusInternalServerError, "")
+	}
+
+	status := statusStr == "true"
+
+	err := repoIml.NewToDoRepo(models.ToDoDB.Collection).Update(idStr, status)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "")
+	}
+
+	return c.JSON(http.StatusOK, "Update successfully")
+}
+
+func ToDoDelete(c echo.Context) error {
+	var idStr = c.QueryParam("id")
+	if idStr == "" {
+		return c.String(http.StatusInternalServerError, "")
+	}
+
+	err := repoIml.NewToDoRepo(models.ToDoDB.Collection).Delete(idStr)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "")
+	}
+
+	return c.JSON(http.StatusOK, "Delete successfully")
 }

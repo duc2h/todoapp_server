@@ -5,8 +5,9 @@ import (
 )
 
 type ToDoRepo interface {
+	FindAll() ([]models.ToDo, error)
 	FindToDoByTask(task string) (models.ToDo, error)
 	Insert(model models.ToDo) error
-	Update(model models.ToDo) error
+	Update(id string, status bool) error
 	Delete(id string) error
 }
