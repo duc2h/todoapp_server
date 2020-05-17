@@ -1,0 +1,23 @@
+version: '3.7'
+
+services: 
+    golang:
+        container_name: todo_server
+        build: 
+            context: .
+            dockerfile: ./Dockerfile
+        ports: 
+            - 8080:8080
+        networks:
+            - common1
+
+    mongo:
+        container_name: mongo_todo_app
+        image: mongo
+        ports:
+            - 27017:27017
+        networks:
+            - common1
+
+networks:
+    common1:

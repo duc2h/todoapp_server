@@ -8,17 +8,6 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-// func serverHeader(next echo.HandlerFunc) echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		c.Response().Header().Set("Content-Type", "application/x-www-form-urlencoded")
-// 		c.Header().Set("Access-Control-Allow-Origin", "*")
-// w.Header().Set("Access-Control-Allow-Methods", "PUT")
-// w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-// 		return next(c)
-// 	}
-// }
-
 func main() {
 	// Connect to DB
 	mongo := driver.ConnectMongoDB()
@@ -28,7 +17,7 @@ func main() {
 	// api
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000", "http://10.17.8.237:3000"},
+		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
