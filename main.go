@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hoangduc02011998/todo_server/action"
+	"github.com/hoangduc02011998/todo_server/api"
 	"github.com/hoangduc02011998/todo_server/driver"
 	"github.com/hoangduc02011998/todo_server/models"
 	"github.com/labstack/echo"
@@ -13,6 +13,7 @@ func main() {
 	mongo := driver.ConnectMongoDB()
 	// Create column todo
 	models.InitToDoDB(mongo.Client)
+	models.InitUserDB(mongo.Client)
 
 	// api
 	e := echo.New()
@@ -21,11 +22,15 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	e.GET("/api/task/all", action.ToDoGetAll)
-	e.GET("/api/task", action.ToDoGetByTask)
-	e.POST("/api/task", action.ToDoPost)
-	e.PUT("/api/task", action.ToDoPut)
-	e.DELETE("/api/task", action.ToDoDelete)
+	// Task
+	e.GET("/api/task/all", api.ToDoGetAll)
+	e.GET("/api/task", api.ToDoGetByTask)
+	e.POST("/api/task", api.ToDoPost)
+	e.PUT("/api/task", api.ToDoPut)
+	e.DELETE("/api/task", api.ToDoDelete)
+
+	// User
+	e.POST("/api/user", api.UserPost)
 
 	e.Start(":8080")
 }

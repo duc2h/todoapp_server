@@ -1,4 +1,4 @@
-package repository
+package repo
 
 import (
 	"github.com/hoangduc02011998/todo_server/models"

@@ -12,10 +12,6 @@ type ToDo struct {
 	Status *bool              `json:"status,omitempty" bson:"status,omitempty"`
 }
 
-type DBModel struct {
-	Collection *mongo.Collection
-}
-
 var ToDoDB = &DBModel{}
 
 func InitToDoDB(client *mongo.Client) *mongo.Collection {
