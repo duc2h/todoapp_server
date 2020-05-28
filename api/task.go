@@ -5,12 +5,19 @@ import (
 	"io/ioutil"
 
 	"github.com/hoangduc02011998/todo_server/models"
+	repo "github.com/hoangduc02011998/todo_server/repository"
 	"github.com/hoangduc02011998/todo_server/repository/repoIml"
 	"github.com/labstack/echo"
 )
 
-func ToDoGetAll(c echo.Context) error {
-	todos, err := repoIml.NewToDoRepo(models.ToDoDB.Collection).FindAll()
+var taskRepo repo.TaskRepo
+
+func InitTaskRepo() {
+	taskRepo = repoIml.NewTaskRepo(models.TaskDB.Collection)
+}
+
+func TaskGetAll(c echo.Context) error {
+	tasks, err := taskRepo.FindAll()
 	if err != nil {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Invalid,
@@ -21,20 +28,20 @@ func ToDoGetAll(c echo.Context) error {
 	return Respond(c, &ResponseModel{
 		Status:  APIStatus.Ok,
 		Message: APIStatus.Ok,
-		Data:    todos,
+		Data:    tasks,
 	})
 }
 
-func ToDoGetByTask(c echo.Context) error {
-	task := c.QueryParam("task")
-	if task == "" {
+func TaskGetByTask(c echo.Context) error {
+	taskName := c.QueryParam("taskName")
+	if taskName == "" {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Invalid,
 			Message: APIStatus.Invalid,
 		})
 	}
 
-	todo, err := repoIml.NewToDoRepo(models.ToDoDB.Collection).FindToDoByTask(task)
+	task, err := taskRepo.FindTaskByTask(taskName)
 	if err != nil {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Error,
@@ -45,13 +52,13 @@ func ToDoGetByTask(c echo.Context) error {
 	return Respond(c, &ResponseModel{
 		Status:  APIStatus.Ok,
 		Message: APIStatus.Ok,
-		Data:    todo,
+		Data:    task,
 	})
 }
 
-// Create one todo
-func ToDoPost(c echo.Context) error {
-	var todo models.ToDo
+// Create one Task
+func TaskPost(c echo.Context) error {
+	var task models.Task
 	bodyBytes, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		return Respond(c, &ResponseModel{
@@ -60,7 +67,7 @@ func ToDoPost(c echo.Context) error {
 		})
 	}
 
-	err = json.Unmarshal(bodyBytes, &todo)
+	err = json.Unmarshal(bodyBytes, &task)
 	if err != nil {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Error,
@@ -68,7 +75,7 @@ func ToDoPost(c echo.Context) error {
 		})
 	}
 
-	err = repoIml.NewToDoRepo(models.ToDoDB.Collection).Insert(todo)
+	err = taskRepo.Insert(task)
 	if err != nil {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Error,
@@ -79,11 +86,11 @@ func ToDoPost(c echo.Context) error {
 	return Respond(c, &ResponseModel{
 		Status:  APIStatus.Ok,
 		Message: APIStatus.Ok,
-		Data:    todo,
+		Data:    task,
 	})
 }
 
-func ToDoPut(c echo.Context) error {
+func TaskPut(c echo.Context) error {
 	var idStr = c.QueryParam("id")
 	var statusStr = c.QueryParam("status")
 	if idStr == "" || statusStr == "" {
@@ -94,7 +101,7 @@ func ToDoPut(c echo.Context) error {
 	}
 
 	status := statusStr == "true"
-	err := repoIml.NewToDoRepo(models.ToDoDB.Collection).Update(idStr, status)
+	err := taskRepo.Update(idStr, status)
 
 	if err != nil {
 		return Respond(c, &ResponseModel{
@@ -109,7 +116,7 @@ func ToDoPut(c echo.Context) error {
 	})
 }
 
-func ToDoDelete(c echo.Context) error {
+func TaskDelete(c echo.Context) error {
 	var idStr = c.QueryParam("id")
 	if idStr == "" {
 		return Respond(c, &ResponseModel{
@@ -118,7 +125,7 @@ func ToDoDelete(c echo.Context) error {
 		})
 	}
 
-	err := repoIml.NewToDoRepo(models.ToDoDB.Collection).Delete(idStr)
+	err := taskRepo.Delete(idStr)
 	if err != nil {
 		return Respond(c, &ResponseModel{
 			Status:  APIStatus.Error,

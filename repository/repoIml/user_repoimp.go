@@ -34,3 +34,16 @@ func (mongo *UserRepoIml) Insert(model models.User) error {
 
 	return nil
 }
+
+func (mongo *UserRepoIml) Login(model models.User) (models.User, error) {
+
+	user := models.User{}
+	result := mongo.Collection.FindOne(context.Background(), model)
+
+	err := result.Decode(&user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}

@@ -8,12 +8,21 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
+var isLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
+	SigningMethod: "HS512",
+	SigningKey:    []byte("mySecret"),
+})
+
 func main() {
 	// Connect to DB
 	mongo := driver.ConnectMongoDB()
 	// Create column todo
-	models.InitToDoDB(mongo.Client)
+	models.InitTaskDB(mongo.Client)
 	models.InitUserDB(mongo.Client)
+
+	// init repo
+	api.InitUserRepo()
+	api.InitTaskRepo()
 
 	// api
 	e := echo.New()
@@ -22,15 +31,18 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	jwtGroup := e.Group("")
+	jwtGroup.Use(isLoggedIn)
 	// Task
-	e.GET("/api/task/all", api.ToDoGetAll)
-	e.GET("/api/task", api.ToDoGetByTask)
-	e.POST("/api/task", api.ToDoPost)
-	e.PUT("/api/task", api.ToDoPut)
-	e.DELETE("/api/task", api.ToDoDelete)
+	jwtGroup.GET("/api/task/all", api.TaskGetAll)
+	jwtGroup.GET("/api/task", api.TaskGetByTask)
+	jwtGroup.POST("/api/task", api.TaskPost)
+	jwtGroup.PUT("/api/task", api.TaskPut)
+	jwtGroup.DELETE("/api/task", api.TaskDelete)
 
 	// User
 	e.POST("/api/user", api.UserPost)
+	e.POST("/api/user/login", api.UserLogin)
 
 	e.Start(":8080")
 }
