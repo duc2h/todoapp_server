@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/hoangduc02011998/todo_server/api"
+	biz "github.com/hoangduc02011998/todo_server/business"
 	"github.com/hoangduc02011998/todo_server/driver"
 	"github.com/hoangduc02011998/todo_server/models"
 	"github.com/labstack/echo"
@@ -21,8 +22,7 @@ func main() {
 	models.InitUserDB(mongo.Client)
 
 	// init repo
-	api.InitUserRepo()
-	api.InitTaskRepo()
+	biz.InitRepo()
 
 	// api
 	e := echo.New()
@@ -31,18 +31,18 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	jwtGroup := e.Group("")
+	jwtGroup := e.Group("/todo")
 	jwtGroup.Use(isLoggedIn)
 	// Task
-	jwtGroup.GET("/api/task/all", api.TaskGetAll)
-	jwtGroup.GET("/api/task", api.TaskGetByTask)
-	jwtGroup.POST("/api/task", api.TaskPost)
-	jwtGroup.PUT("/api/task", api.TaskPut)
-	jwtGroup.DELETE("/api/task", api.TaskDelete)
+	jwtGroup.GET("/tasks", api.TaskAllGet)
+	jwtGroup.GET("/tasks/:name", api.TaskByNameGet)
+	jwtGroup.POST("/tasks", api.TaskPost)
+	jwtGroup.PUT("/tasks/:name/:status", api.TaskPut)
+	jwtGroup.DELETE("/tasks/:name", api.TaskDelete)
 
 	// User
-	e.POST("/api/user", api.UserPost)
-	e.POST("/api/user/login", api.UserLogin)
+	e.POST("/todo/users", api.UserPost)
+	e.POST("/todo/users/login", api.UserLogin)
 
 	e.Start(":8080")
 }

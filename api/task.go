@@ -4,56 +4,26 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
+	biz "github.com/hoangduc02011998/todo_server/business"
 	"github.com/hoangduc02011998/todo_server/models"
-	repo "github.com/hoangduc02011998/todo_server/repository"
-	"github.com/hoangduc02011998/todo_server/repository/repoIml"
 	"github.com/labstack/echo"
 )
 
-var taskRepo repo.TaskRepo
+func TaskAllGet(c echo.Context) error {
 
-func InitTaskRepo() {
-	taskRepo = repoIml.NewTaskRepo(models.TaskDB.Collection)
+	return models.Respond(c, biz.GetAllTask())
 }
 
-func TaskGetAll(c echo.Context) error {
-	tasks, err := taskRepo.FindAll()
-	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Invalid,
-			Message: err.Error(),
-		})
-	}
-
-	return Respond(c, &ResponseModel{
-		Status:  APIStatus.Ok,
-		Message: APIStatus.Ok,
-		Data:    tasks,
-	})
-}
-
-func TaskGetByTask(c echo.Context) error {
-	taskName := c.QueryParam("taskName")
+func TaskByNameGet(c echo.Context) error {
+	taskName := c.Param("name")
 	if taskName == "" {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Invalid,
-			Message: APIStatus.Invalid,
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Invalid,
+			Message: "Required name of task",
 		})
 	}
 
-	task, err := taskRepo.FindTaskByTask(taskName)
-	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
-			Message: err.Error(),
-		})
-	}
-
-	return Respond(c, &ResponseModel{
-		Status:  APIStatus.Ok,
-		Message: APIStatus.Ok,
-		Data:    task,
-	})
+	return models.Respond(c, biz.GetTaskByName(taskName))
 }
 
 // Create one Task
@@ -61,80 +31,52 @@ func TaskPost(c echo.Context) error {
 	var task models.Task
 	bodyBytes, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Error,
 			Message: err.Error(),
 		})
 	}
 
 	err = json.Unmarshal(bodyBytes, &task)
 	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Error,
 			Message: err.Error(),
 		})
 	}
 
-	err = taskRepo.Insert(task)
-	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
-			Message: err.Error(),
+	if task.TaskName == "" {
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Invalid,
+			Message: "TaskName is required",
 		})
 	}
 
-	return Respond(c, &ResponseModel{
-		Status:  APIStatus.Ok,
-		Message: APIStatus.Ok,
-		Data:    task,
-	})
+	return models.Respond(c, biz.CreateTask(task))
 }
 
 func TaskPut(c echo.Context) error {
-	var idStr = c.QueryParam("id")
-	var statusStr = c.QueryParam("status")
-	if idStr == "" || statusStr == "" {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Invalid,
-			Message: APIStatus.Invalid,
+	var name = c.Param("name")
+	var statusStr = c.Param("status")
+	if name == "" || statusStr == "" {
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Invalid,
+			Message: models.APIStatus.Invalid,
 		})
 	}
 
 	status := statusStr == "true"
-	err := taskRepo.Update(idStr, status)
-
-	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
-			Message: err.Error(),
-		})
-	}
-
-	return Respond(c, &ResponseModel{
-		Status:  APIStatus.Ok,
-		Message: APIStatus.Ok,
-	})
+	return models.Respond(c, biz.UpdateTask(name, status))
 }
 
 func TaskDelete(c echo.Context) error {
-	var idStr = c.QueryParam("id")
-	if idStr == "" {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Invalid,
-			Message: APIStatus.Invalid,
+	var name = c.Param("name")
+	if name == "" {
+		return models.Respond(c, &models.ResponseModel{
+			Status:  models.APIStatus.Invalid,
+			Message: models.APIStatus.Invalid,
 		})
 	}
 
-	err := taskRepo.Delete(idStr)
-	if err != nil {
-		return Respond(c, &ResponseModel{
-			Status:  APIStatus.Error,
-			Message: err.Error(),
-		})
-	}
-
-	return Respond(c, &ResponseModel{
-		Status:  APIStatus.Ok,
-		Message: APIStatus.Ok,
-	})
+	return models.Respond(c, biz.DeleteTask(name))
 }

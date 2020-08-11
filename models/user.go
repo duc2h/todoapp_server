@@ -14,10 +14,14 @@ type User struct {
 	PasswordConfirm string `json:"passwordConfirm,omitempty" bson:"password_confirm,omitempty"`
 }
 
+type UserLogin struct {
+	UserName string `json:"userName,omitempty" bson:"userName,omitempty"`
+	Password string `json:"password,omitempty" bson:"password,omitempty"`
+}
+
 var UserDB = &DBModel{}
 
-func InitUserDB(client *mongo.Client) *mongo.Collection {
+func InitUserDB(client *mongo.Client) {
 	collection := client.Database(config.DB_NAME).Collection("user")
 	UserDB.Collection = collection
-	return collection
 }

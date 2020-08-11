@@ -14,8 +14,7 @@ type Task struct {
 
 var TaskDB = &DBModel{}
 
-func InitTaskDB(client *mongo.Client) *mongo.Collection {
+func InitTaskDB(client *mongo.Client) {
 	collection := client.Database(config.DB_NAME).Collection("task")
 	TaskDB.Collection = collection
-	return collection
 }

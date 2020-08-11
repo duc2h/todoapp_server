@@ -35,15 +35,26 @@ func (mongo *UserRepoIml) Insert(model models.User) error {
 	return nil
 }
 
-func (mongo *UserRepoIml) Login(model models.User) (models.User, error) {
-
+func (mongo *UserRepoIml) Login(model models.User) (*models.User, error) {
 	user := models.User{}
 	result := mongo.Collection.FindOne(context.Background(), model)
 
 	err := result.Decode(&user)
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
+}
+
+func (mongo *UserRepoIml) GetByUsername(username string) (*models.User, error) {
+	user := models.User{}
+	result := mongo.Collection.FindOne(context.Background(), models.User{UserName: username})
+
+	err := result.Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
