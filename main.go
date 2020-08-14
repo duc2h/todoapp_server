@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/hoangduc02011998/todo_server/api"
-	biz "github.com/hoangduc02011998/todo_server/business"
-	"github.com/hoangduc02011998/todo_server/driver"
-	"github.com/hoangduc02011998/todo_server/models"
+	"github.com/hoangduc02011998/todo-app/server/api"
+	biz "github.com/hoangduc02011998/todo-app/server/business"
+	"github.com/hoangduc02011998/todo-app/server/driver"
+	"github.com/hoangduc02011998/todo-app/server/models"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -44,5 +44,5 @@ func main() {
 	e.POST("/todo/users", api.UserPost)
 	e.POST("/todo/users/login", api.UserLogin)
 
-	e.Start(":80")
+	e.Start(":8080")
 }

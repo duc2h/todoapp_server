@@ -1,9 +1,9 @@
 package biz
 
 import (
-	"github.com/hoangduc02011998/todo_server/models"
-	repo "github.com/hoangduc02011998/todo_server/repository"
-	"github.com/hoangduc02011998/todo_server/repository/repoIml"
+	"github.com/hoangduc02011998/todo-app/server/models"
+	repo "github.com/hoangduc02011998/todo-app/server/repository"
+	"github.com/hoangduc02011998/todo-app/server/repository/repoIml"
 )
 
 func InitRepo() {

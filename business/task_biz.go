@@ -1,6 +1,6 @@
 package biz
 
-import "github.com/hoangduc02011998/todo_server/models"
+import "github.com/hoangduc02011998/todo-app/server/models"
 
 func GetAllTask() *models.ResponseModel {
 	tasks, err := taskRepo.FindAll()

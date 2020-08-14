@@ -3,8 +3,8 @@ package repoIml
 import (
 	"context"
 
-	"github.com/hoangduc02011998/todo_server/models"
-	repo "github.com/hoangduc02011998/todo_server/repository"
+	"github.com/hoangduc02011998/todo-app/server/models"
+	repo "github.com/hoangduc02011998/todo-app/server/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
