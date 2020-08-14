@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/hoangduc02011998/todo_server/config"
+	"github.com/hoangduc02011998/todo-app/server/config"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )

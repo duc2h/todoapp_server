@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	biz "github.com/hoangduc02011998/todo_server/business"
-	"github.com/hoangduc02011998/todo_server/models"
+	biz "github.com/hoangduc02011998/todo-app/server/business"
+	"github.com/hoangduc02011998/todo-app/server/models"
 	"github.com/labstack/echo"
 )
 

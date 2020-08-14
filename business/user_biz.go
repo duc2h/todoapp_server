@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/hoangduc02011998/todo_server/models"
+	"github.com/hoangduc02011998/todo-app/server/models"
 )
 
 // jwt claims ...

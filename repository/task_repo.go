@@ -1,6 +1,6 @@
 package repo
 
-import "github.com/hoangduc02011998/todo_server/models"
+import "github.com/hoangduc02011998/todo-app/server/models"
 
 type TaskRepo interface {
 	FindAll() ([]models.Task, error)
